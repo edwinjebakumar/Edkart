@@ -10,6 +10,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using API.Errors;
 using System.Net;
+using API.Helpers;
 
 namespace API.Controllers
 {
@@ -36,12 +37,15 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDTO>>> GetProducts()
+        public async Task<ActionResult<Pagination<ProductToReturnDTO>>> GetProducts
+                                                        ([FromQuery] ProductSpecParams productParams)
         {
             //var productList = await _context.Products.ToListAsync();
             //var productList = await _productRepo.ListAllAsync();
 
-            var spec = new ProductWithTypesAndBrandsSpecification();
+            var spec = new ProductWithTypesAndBrandsSpecification(productParams);
+            var countSpec = new ProductWithFiltersForCountSpecification(productParams);
+            var totalItems = await _productRepo.CountAsync(countSpec);
             var productList = await _productRepo.ListAsync(spec);
             //return Ok(productList);
             // return productList.Select(p => new ProductToReturnDTO
@@ -55,7 +59,10 @@ namespace API.Controllers
             //     ProductType = p.ProductType.Name
             // }).ToList();
 
-            return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDTO>>(productList));
+            var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDTO>>(productList);
+
+            return Ok(new Pagination<ProductToReturnDTO>(productParams.PageIndex, productParams.PageSize, totalItems, data));
+            //return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDTO>>(productList));
         }
 
         [HttpGet("{id}")]
