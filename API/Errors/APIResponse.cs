@@ -21,10 +21,10 @@ namespace API.Errors
         {
             string msg = statusCode switch
             {
-                400 => "You've made a Bad Request",
-                401 => "You are not authorized",
-                404 => "No resource found",
-                500 => "Some internal exception",
+                400 => "You've made a Bad Request_400",
+                401 => "You are not authorized_401",
+                404 => "No resource found_404",
+                500 => "Some internal exception_500",
                 _ => null
             };
 
