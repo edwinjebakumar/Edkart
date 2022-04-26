@@ -5,18 +5,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Errors;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
-    
+
     public class BuggyController : BaseApiController
     {
         private readonly StoreContext _context;
         public BuggyController(StoreContext context)
         {
             _context = context;
+        }
+
+        [HttpGet("testauth")]
+        [Authorize]
+        public ActionResult<string> GetSecretText()
+        {
+            return "Secret Stuff";
         }
 
         [HttpGet("notfound")]
@@ -34,14 +42,14 @@ namespace API.Controllers
         public ActionResult GetServerError()
         {
             var product = _context.Products.Find(42);
-            
+
             return Ok(product.ToString());
         }
 
         [HttpGet("badrequest")]
         public ActionResult GetBadRequest()
         {
-            
+
             return BadRequest(new APIResponse(400));
         }
 
