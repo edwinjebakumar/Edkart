@@ -1,0 +1,46 @@
+<div class="container mt-2">
+    <table class="table">
+        <thead>
+            <tr>
+                <th class="bgHead border-0" scope="col">
+                    <div class="p-2 px-3 text-uppercase">Order Id</div>
+                </th>
+                <th class="bgHead border-0" scope="col">
+                    <div class="p-2 px-3 text-uppercase">Order Date</div>
+                </th>
+                <!-- <th class="bgHead border-0" scope="col">
+                    <div class="p-2 px-3 text-uppercase">Delivery Method</div>
+                </th> -->
+                <th class="bgHead border-0" scope="col">
+                    <div class="p-2 px-3 text-uppercase">Total</div>
+                </th>
+                <th class="bgHead border-0" scope="col">
+                    <div class="p-2 px-3 text-uppercase">Status</div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr routerLink="/orders/{{item.id}}" class="bgRow" *ngFor="let item of orders">
+                <th scope="row">
+                    <div class="p-2">
+                        <div class="ml-3 d-inline-block align-middle">
+                            <h5 class="mb-0 text-dark"><strong>#{{item.id}}</strong></h5>
+                        </div>
+                    </div>
+                </th>
+                <td class="p-2 px-3 align-middle">
+                    <h5>{{item.orderDate |date:'yyyy-MM-dd hh:mm a'}}</h5>
+                </td>
+                <!-- <td class="p-2 px-3 align-middle">
+                    <h5>{{item.deliveryMethod}}</h5>
+                </td> -->
+                <td class="p-2 px-3 align-middle">
+                    <h5>{{item.total |currency:'AED '}}</h5>
+                </td>
+                <td class="p-2 px-3 align-middle">
+                    <h5>{{item.status}}</h5>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
