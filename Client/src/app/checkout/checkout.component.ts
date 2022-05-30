@@ -15,12 +15,13 @@ export class CheckoutComponent implements OnInit {
   basketTotals$: Observable<IBasketTotals>;
 
   constructor(private formBuilder: FormBuilder,
-              private accountService: AccountService,
-              private basketService: BasketService) { }
+    private accountService: AccountService,
+    private basketService: BasketService) { }
 
   ngOnInit(): void {
     this.createCheckoutForm();
     this.getAddressFormValues();
+    this.getDeliveryMethodValues();
     this.basketTotals$ = this.basketService.basketTotal$;
   }
 
@@ -54,6 +55,13 @@ export class CheckoutComponent implements OnInit {
       error => {
         console.log(error);
       })
+  }
+
+  getDeliveryMethodValues() {
+    var basket = this.basketService.getCurrentBasketValue();
+    if (basket?.deliveryMethodId) {
+      this.checkoutForm.get('deliveryForm').get('deliveryMethod').patchValue(basket.deliveryMethodId.toString());
+    }
   }
 
 }
