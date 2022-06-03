@@ -36,6 +36,7 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
+        [Cached(600)]
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductToReturnDTO>>> GetProducts
                                                         ([FromQuery] ProductSpecParams productParams)
@@ -94,6 +95,7 @@ namespace API.Controllers
             return _mapper.Map<Product, ProductToReturnDTO>(product);
         }
 
+        [Cached(600)]
         [HttpGet("brands")]
         public async Task<ActionResult<IReadOnlyList<ProductBrand>>> GetProductBrands()
         {
