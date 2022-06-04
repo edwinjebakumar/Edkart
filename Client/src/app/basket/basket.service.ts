@@ -127,7 +127,7 @@ export class BasketService {
   }
 
   private createOrUpdateBasket(items: IBasketItem[], basketItemToAdd: IBasketItem, quantity: number) {
-    console.log(items);
+    //console.log(items);
     const index = items.findIndex(i => i.id == basketItemToAdd.id);
     if (index == -1) {
       basketItemToAdd.quantity = quantity;
