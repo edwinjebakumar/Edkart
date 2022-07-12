@@ -10,6 +10,7 @@ using Core.Entities;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Stripe;
 using Order = Core.Entities.OrderAggregate.Order;
@@ -21,15 +22,17 @@ namespace API.Controllers
         private readonly IPaymentService _paymentService;
         private readonly IMapper _mapper;
         private readonly ILogger<PaymentsController> _logger;
-        private const string WhSecret = "whsec_2fa8c8809cd8e5f188174e827c4393a881385ca2cd49b242c109d5623d06e98d";
+        private readonly string _whSecret;
 
         public PaymentsController(IPaymentService paymentService,
                                 IMapper mapper,
-                                ILogger<PaymentsController> logger)
+                                ILogger<PaymentsController> logger,
+                                IConfiguration config)
         {
             _mapper = mapper;
             _logger = logger;
             _paymentService = paymentService;
+            _whSecret = config.GetSection("StripeSettings:WhSecretKey").Value;
         }
 
         [Authorize]
@@ -46,7 +49,7 @@ namespace API.Controllers
         public async Task<ActionResult> StripeWebhook()
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], WhSecret);
+            var stripeEvent = EventUtility.ConstructEvent(json, Request.Headers["Stripe-Signature"], _whSecret);
 
             PaymentIntent paymentIntent;
             Order order;
