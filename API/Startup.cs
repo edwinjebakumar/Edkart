@@ -38,10 +38,29 @@ namespace API
             services.AddDbContext<StoreContext>(x => x.UseNpgsql(_config.GetConnectionString("DefaultConnection")));
             services.AddDbContext<AppIdentityDbContext>(x => x.UseNpgsql(_config.GetConnectionString("IdentityConnection")));
 
+            // Get Redis configuration from appsettings.json
+            var redisUrl = _config["Redis:Url"];
+            var redisToken = _config["Redis:Token"];
+
+            // ✅ Extract only the hostname (remove "https://")
+            var redisHost = redisUrl.Replace("https://", "").TrimEnd('/'); // Example: "your-upstash-redis.upstash.io"
+
+            // ✅ Configure Redis connection
+            var options = new ConfigurationOptions
+            {
+                EndPoints = { $"{redisHost}:6379" },  // Use extracted host
+                Password = redisToken,      // Use Upstash token as password
+                Ssl = true,                 // Upstash requires SSL
+                ConnectTimeout = 10000,  // 🔹 Increase connection timeout (10 sec)
+                SyncTimeout = 10000,     // 🔹 Increase sync timeout (10 sec)
+                AsyncTimeout = 10000,    // 🔹 Increase async timeout (10 sec)
+                AbortOnConnectFail = false,
+                KeepAlive = 10           // 🔹 Keep connection alive every 10 sec
+            };
             services.AddSingleton<IConnectionMultiplexer>(c =>
             {
-                var configuration = ConfigurationOptions.Parse(_config.GetConnectionString("Redis"), true);
-                return ConnectionMultiplexer.Connect(configuration);
+                //var configuration = ConfigurationOptions.Parse(_config.GetConnectionString("Redis"), true);
+                return ConnectionMultiplexer.Connect(options);
             });
             services.AddCors(opt =>
             {
