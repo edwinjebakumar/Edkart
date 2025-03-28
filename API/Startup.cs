@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using API.Extensions;
 using API.Helpers;
@@ -27,6 +28,14 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            if (_config == null)
+            {
+                throw new Exception("Configuration is NULL!");
+            }
+            Console.WriteLine("DefaultConnection: " + _config.GetConnectionString("DefaultConnection"));
+            Console.WriteLine("IdentityConnection: " + _config.GetConnectionString("IdentityConnection"));
+            Console.WriteLine("Redis:Url: " + _config["Redis:Url"]);
+
 
             services.AddControllers();
             services.AddApplicationServices();
