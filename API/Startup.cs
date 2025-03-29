@@ -34,9 +34,9 @@ namespace API
             }
             Console.WriteLine("=== 🔍 End Debugging ===");
 
-            Console.WriteLine("DefaultConnection: " + _config.GetConnectionString("DefaultConnection"));
+            Console.WriteLine("EdkartConnection: " + _config.GetConnectionString("EdkartConnection"));
             Console.WriteLine("IdentityConnection: " + _config.GetConnectionString("IdentityConnection"));
-            Console.WriteLine("Redis:Url: " + _config["Redis:Url"]);
+            Console.WriteLine("RedisConfig:Url: " + _config["RedisConfig:Url"]);
 
 
             services.AddControllers();
@@ -46,12 +46,12 @@ namespace API
             services.AddAutoMapper(typeof(MappingProfiles));
             // services.AddDbContext<StoreContext>(x => x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
             // services.AddDbContext<AppIdentityDbContext>(x => x.UseSqlite(_config.GetConnectionString("IdentityConnection")));
-            services.AddDbContext<StoreContext>(x => x.UseNpgsql(_config.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<StoreContext>(x => x.UseNpgsql(_config.GetConnectionString("EdkartConnection")));
             services.AddDbContext<AppIdentityDbContext>(x => x.UseNpgsql(_config.GetConnectionString("IdentityConnection")));
 
             // Get Redis configuration from appsettings.json
-            var redisUrl = _config["Redis:Url"];
-            var redisToken = _config["Redis:Token"];
+            var redisUrl = _config["RedisConfig:Url"];
+            var redisToken = _config["RedisConfig:Token"];
 
             // ✅ Extract only the hostname (remove "https://")
             var redisHost = redisUrl.Replace("https://", "").TrimEnd('/'); // Example: "your-upstash-redis.upstash.io"
