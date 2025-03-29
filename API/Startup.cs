@@ -27,6 +27,13 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Console.WriteLine("=== 🔍 Debugging Configuration Keys ===");
+            foreach (var item in _config.AsEnumerable())
+            {
+                Console.WriteLine($"{item.Key}: {item.Value}");
+            }
+            Console.WriteLine("=== 🔍 End Debugging ===");
+
             Console.WriteLine("DefaultConnection: " + _config.GetConnectionString("DefaultConnection"));
             Console.WriteLine("IdentityConnection: " + _config.GetConnectionString("IdentityConnection"));
             Console.WriteLine("Redis:Url: " + _config["Redis:Url"]);
