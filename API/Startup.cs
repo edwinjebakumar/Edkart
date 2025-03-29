@@ -20,18 +20,13 @@ namespace API
         private readonly IConfiguration _config;
         public Startup(IConfiguration config)
         {
-            _config = config;
-
+            _config = config ?? throw new Exception("Configuration is NULL!");
         }
 
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            if (_config == null)
-            {
-                throw new Exception("Configuration is NULL!");
-            }
             Console.WriteLine("DefaultConnection: " + _config.GetConnectionString("DefaultConnection"));
             Console.WriteLine("IdentityConnection: " + _config.GetConnectionString("IdentityConnection"));
             Console.WriteLine("Redis:Url: " + _config["Redis:Url"]);
