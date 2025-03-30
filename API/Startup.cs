@@ -101,10 +101,39 @@ namespace API
             app.UseRouting();
 
             app.UseStaticFiles();
+
+            // Around line 104 in Startup.cs
+            var possibleContentPaths = new[]
+            {
+                Path.Combine(Directory.GetCurrentDirectory(), "Content"),
+                Path.Combine(Directory.GetCurrentDirectory(), "API", "Content"),
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "Content"),
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "API", "Content"),
+                // Additional possibilities based on the build logs
+                Path.Combine("/app", "Content"),
+                Path.Combine("/app", "API", "Content"),
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "Content"),
+                Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "API", "Content"),
+                // If you're running from the /app/out directory
+                Path.Combine("/app", "out", "Content"),
+                Path.Combine("/app", "out", "API", "Content")
+            };
+
+            string contentPath = null;
+            foreach (var path in possibleContentPaths)
+            {
+                if (Directory.Exists(path))
+                {
+                    contentPath = path;
+                    Console.WriteLine($"Found Content directory at: {contentPath}");
+                    break;
+                }
+            }
+
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Content")),
-                RequestPath = "/content"
+                FileProvider = new PhysicalFileProvider(contentPath),
+                RequestPath = "/Content"
             });
 
             app.UseCors("CorsPolicy");
