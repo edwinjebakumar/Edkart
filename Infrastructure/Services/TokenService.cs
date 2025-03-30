@@ -19,7 +19,7 @@ namespace Infrastructure.Services
         public TokenService(IConfiguration config)
         {
             _config = config;
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtTokenConfig:IssuerSigningKey"]));
         }
 
         public string CreateToken(AppUser user)
@@ -36,7 +36,7 @@ namespace Infrastructure.Services
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = creds,
-                Issuer = _config["Token:Issuer"]
+                Issuer = _config["JwtTokenConfig:Issuer"]
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
