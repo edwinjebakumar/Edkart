@@ -28,8 +28,8 @@ namespace API.Extensions
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenConfig:Key"])),
-                    ValidIssuer = config["TokenConfig:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JwtTokenConfig:IssuerSigningKey"])),
+                    ValidIssuer = config["JwtTokenConfig:Issuer"],
                     ValidateIssuer = true,
                     ValidateAudience = false
                 };
