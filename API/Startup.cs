@@ -77,7 +77,9 @@ namespace API
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://edkart-phi.vercel.app");
+                    policy.AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .WithOrigins("https://edkart-phi.vercel.app","https://edkart-edwinjebakumars-projects.vercel.app","https://edkart-git-main-edwinjebakumars-projects.vercel.app");
                 });
             });
 
