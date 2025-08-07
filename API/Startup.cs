@@ -36,7 +36,9 @@ namespace API
 
             Console.WriteLine("EdkartConnection: " + _config.GetConnectionString("EdkartConnection"));
             Console.WriteLine("IdentityConnection: " + _config.GetConnectionString("IdentityConnection"));
-            Console.WriteLine("RedisConfig:Url: " + _config["RedisConfig:Url"]);
+            Console.WriteLine("RedisConfig:Endpoint: " + _config["RedisConfig:Endpoint"]);
+            Console.WriteLine("RedisConfig:Username: " + _config["RedisConfig:Username"]);
+            Console.WriteLine("RedisConfig:Password: " + _config["RedisConfig:Password"]);
 
 
             services.AddControllers();
@@ -49,37 +51,60 @@ namespace API
             services.AddDbContext<StoreContext>(x => x.UseNpgsql(_config.GetConnectionString("EdkartConnection")));
             services.AddDbContext<AppIdentityDbContext>(x => x.UseNpgsql(_config.GetConnectionString("IdentityConnection")));
 
-            // Get Redis configuration from appsettings.json
-            var redisUrl = _config["RedisConfig:Url"];
-            var redisToken = _config["RedisConfig:Token"];
+            // // Get Redis configuration from appsettings.json
+            // var redisUrl = _config["RedisConfig:Url"];
+            // var redisToken = _config["RedisConfig:Token"];
 
-            // ✅ Extract only the hostname (remove "https://")
-            var redisHost = redisUrl.Replace("https://", "").TrimEnd('/'); // Example: "your-upstash-redis.upstash.io"
+            // // ✅ Extract only the hostname (remove "https://")
+            // var redisHost = redisUrl.Replace("https://", "").TrimEnd('/'); // Example: "your-upstash-redis.upstash.io"
 
-            // ✅ Configure Redis connection
-            var options = new ConfigurationOptions
-            {
-                EndPoints = { $"{redisHost}:6379" },  // Use extracted host
-                Password = redisToken,      // Use Upstash token as password
-                Ssl = true,                 // Upstash requires SSL
-                ConnectTimeout = 10000,  // 🔹 Increase connection timeout (10 sec)
-                SyncTimeout = 10000,     // 🔹 Increase sync timeout (10 sec)
-                AsyncTimeout = 10000,    // 🔹 Increase async timeout (10 sec)
-                AbortOnConnectFail = false,
-                KeepAlive = 10           // 🔹 Keep connection alive every 10 sec
-            };
+            // // ✅ Configure Redis connection
+            // var options = new ConfigurationOptions
+            // {
+            //     EndPoints = { $"{redisHost}:6379" },  // Use extracted host
+            //     Password = redisToken,      // Use Upstash token as password
+            //     Ssl = true,                 // Upstash requires SSL
+            //     ConnectTimeout = 10000,  // 🔹 Increase connection timeout (10 sec)
+            //     SyncTimeout = 10000,     // 🔹 Increase sync timeout (10 sec)
+            //     AsyncTimeout = 10000,    // 🔹 Increase async timeout (10 sec)
+            //     AbortOnConnectFail = false,
+            //     KeepAlive = 10           // 🔹 Keep connection alive every 10 sec
+            // };
+            // services.AddSingleton<IConnectionMultiplexer>(c =>
+            // {
+            //     //var configuration = ConfigurationOptions.Parse(_config.GetConnectionString("Redis"), true);
+            //     return ConnectionMultiplexer.Connect(options);
+            // });
+
+            var redisEndpoint = _config["RedisConfig:Endpoint"];
+            var redisUsername = _config["RedisConfig:Username"];
+            var redisPassword = _config["RedisConfig:Password"];
+            string[] parts = redisEndpoint.Split(':');
+
+            string host = parts[0];       // redis-14029.c270.us-east-1-3.ec2.redns.redis-cloud.com
+            int port = int.Parse(parts[1]); // 14029 (as int)
+            var muxer = ConnectionMultiplexer.Connect(
+                new ConfigurationOptions
+                {
+                    EndPoints = { { host, port } },
+                    User = redisUsername,
+                    Password = redisPassword
+                }
+            );
+
             services.AddSingleton<IConnectionMultiplexer>(c =>
             {
                 //var configuration = ConfigurationOptions.Parse(_config.GetConnectionString("Redis"), true);
-                return ConnectionMultiplexer.Connect(options);
+                return muxer;
             });
+
             services.AddCors(opt =>
             {
                 opt.AddPolicy("CorsPolicy", policy =>
                 {
                     policy.AllowAnyHeader()
                     .AllowAnyMethod()
-                    .WithOrigins("https://edkart-phi.vercel.app","https://edkart-edwinjebakumars-projects.vercel.app","https://edkart-git-main-edwinjebakumars-projects.vercel.app");
+                    .WithOrigins("https://edkart-phi.vercel.app", "https://edkart-edwinjebakumars-projects.vercel.app", "https://edkart-git-main-edwinjebakumars-projects.vercel.app");
                 });
             });
 
