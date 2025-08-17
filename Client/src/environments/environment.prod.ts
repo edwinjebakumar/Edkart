@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiURL:'https://157.20.180.10/api/'
+  apiURL:'https://edkart.duckdns.org/api/'
 };
