@@ -3,3 +3,6 @@ obj
 appsettings.json
 *.db
 *.rdb
+*.env
+docker-compose.yml
+*.tar
