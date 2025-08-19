@@ -74,7 +74,7 @@ export class ShopService {
     //const product = this.products.find(p => p.id == id);
     let product: IProduct;
     this.productCache.forEach((products: IProduct[]) => {
-      product = products.find(p => p.id);
+      product = products.find(p => p.id == id);
     })
     if (product) {
       return of(product);

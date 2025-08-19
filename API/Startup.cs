@@ -104,7 +104,7 @@ namespace API
                 {
                     policy.AllowAnyHeader()
                     .AllowAnyMethod()
-                    .WithOrigins("https://edkart-phi.vercel.app", "https://edkart-edwinjebakumars-projects.vercel.app", "https://edkart-git-main-edwinjebakumars-projects.vercel.app");
+                    .WithOrigins("https://edkart-phi.vercel.app", "https://edkart-edwinjebakumars-projects.vercel.app", "https://edkart-git-main-edwinjebakumars-projects.vercel.app", "http://localhost:4200", "https://localhost:4200");
                 });
             });
 
